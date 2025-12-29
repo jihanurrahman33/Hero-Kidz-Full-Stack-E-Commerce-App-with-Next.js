@@ -12,6 +12,7 @@ export const fontBangla = localFont({
 });
 
 import "./globals.css";
+import NextAuthProvider from "@/provider/NextAuthProvider";
 
 export const metadata = {
   // ---------------- BASIC ----------------
@@ -98,19 +99,21 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${poppins.className} antialiased`}>
-        <header className="py-2 md:w-11/12 mx-auto">
-          <Navbar></Navbar>
-        </header>
-        <main className="py-2 md:w-11/12 mx-auto min-h[calc(100vh -302px)]">
-          {" "}
-          {children}
-        </main>
-        <footer>
-          <Footer></Footer>
-        </footer>
-      </body>
-    </html>
+    <NextAuthProvider>
+      <html lang="en">
+        <body className={`${poppins.className} antialiased`}>
+          <header className="py-2 md:w-11/12 mx-auto">
+            <Navbar></Navbar>
+          </header>
+          <main className="py-2 md:w-11/12 mx-auto min-h[calc(100vh -302px)]">
+            {" "}
+            {children}
+          </main>
+          <footer>
+            <Footer></Footer>
+          </footer>
+        </body>
+      </html>
+    </NextAuthProvider>
   );
 }

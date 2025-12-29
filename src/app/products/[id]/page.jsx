@@ -1,4 +1,5 @@
 import { getSingleProduct } from "@/actions/server/product";
+import CartButton from "@/components/buttons/CartButton";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 
@@ -105,8 +106,7 @@ const ProductDetails = async ({ params }) => {
 
           {/* Buttons */}
           <div className="flex gap-3 mt-6">
-            <button className="btn btn-primary flex-1">Add to Cart</button>
-            <button className="btn btn-outline flex-1">Buy Now</button>
+            <CartButton product={product} />
           </div>
 
           {/* Features */}

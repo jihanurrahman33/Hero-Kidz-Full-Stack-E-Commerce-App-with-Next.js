@@ -1,8 +1,33 @@
+"use client";
+import { postUser } from "@/actions/server/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 
 const Register = () => {
+  const router = useRouter();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+
+    const registrationData = {
+      name,
+      email,
+      password,
+    };
+    const result = await postUser(registrationData);
+    if (result.acknowledged) {
+      alert("Registration successful! Please login.");
+      router.push("/login");
+    }
+
+    // Handle registration logic here
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200 px-4">
       <div className="card w-full max-w-sm shadow-xl bg-base-100">
@@ -49,7 +74,7 @@ const Register = () => {
           <div className="divider">OR</div>
 
           {/* Register Form */}
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {/* Name */}
             <label className="input input-bordered flex items-center gap-2">
               <FaUser className="text-gray-400" />
@@ -58,6 +83,7 @@ const Register = () => {
                 className="grow"
                 placeholder="Full Name"
                 required
+                name="name"
               />
             </label>
 
@@ -68,6 +94,7 @@ const Register = () => {
                 type="email"
                 className="grow"
                 placeholder="Email"
+                name="email"
                 required
               />
             </label>
@@ -79,6 +106,7 @@ const Register = () => {
                 type="password"
                 className="grow"
                 placeholder="Password"
+                name="password"
                 required
               />
             </label>

@@ -1,8 +1,42 @@
+"use client";
 import Link from "next/link";
 import React from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
+import { signIn } from "next-auth/react";
+import Swal from "sweetalert2";
+import { useRouter } from "next/navigation";
 
 const Login = () => {
+  const router = useRouter();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+
+    const email = form.email.value;
+    const password = form.password.value;
+    const userData = { email, password };
+    // Handle login logic here
+    const result = await signIn("credentials", {
+      email: userData.email,
+      password: userData.password,
+      redirect: false,
+    });
+    if (!result.ok) {
+      Swal.fire({
+        icon: "error",
+        title: "Login Failed",
+        text: "Invalid email or password. Please try again.",
+      });
+    } else {
+      Swal.fire({
+        icon: "success",
+        title: "Login Successful",
+        text: "You have been logged in successfully.",
+      });
+      form.reset();
+      router.push("/");
+    }
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-base-200">
       <div className="card w-full max-w-sm shadow-xl bg-base-100">
@@ -14,7 +48,7 @@ const Login = () => {
             Welcome back! Please login to your account
           </p>
 
-          <form className="space-y-4 mt-4 ">
+          <form onSubmit={handleSubmit} className="space-y-4 mt-4 ">
             {/* Email */}
             <label className="input input-bordered flex items-center gap-2">
               <FaEnvelope className="text-gray-400" />
@@ -22,6 +56,7 @@ const Login = () => {
                 type="email"
                 className="grow"
                 placeholder="Email"
+                name="email"
                 required
               />
             </label>
@@ -33,6 +68,7 @@ const Login = () => {
                 type="password"
                 className="grow"
                 placeholder="Password"
+                name="password"
                 required
               />
             </label>
