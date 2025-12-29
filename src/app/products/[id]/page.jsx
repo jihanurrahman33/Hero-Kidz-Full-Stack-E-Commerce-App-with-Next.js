@@ -2,6 +2,41 @@ import { getSingleProduct } from "@/actions/server/product";
 import Image from "next/image";
 import { FaStar } from "react-icons/fa";
 
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  const product = await getSingleProduct(id);
+
+  return {
+    title: product.title,
+    description: product.description.slice(0, 150),
+
+    openGraph: {
+      title: product.title,
+      description: product.description.slice(0, 150),
+      images: [
+        {
+          url:
+            product.image ||
+            "https://i.ibb.co.com/9kKsMM07/Screenshot-2025-12-29-at-6-39-09-PM.png",
+          width: 1200,
+          height: 630,
+          alt: product.title,
+        },
+      ],
+    },
+
+    twitter: {
+      card: "summary_large_image",
+      title: product.title,
+      description: product.description.slice(0, 150),
+      images: [
+        product.image ||
+          "https://i.ibb.co.com/9kKsMM07/Screenshot-2025-12-29-at-6-39-09-PM.png",
+      ],
+    },
+  };
+}
+
 const ProductDetails = async ({ params }) => {
   const { id } = await params;
   const product = await getSingleProduct(id);
@@ -28,7 +63,7 @@ const ProductDetails = async ({ params }) => {
     <div className="max-w-6xl mx-auto px-4 py-10">
       <div className="grid md:grid-cols-2 gap-8">
         {/* Image */}
-        <div className="relative h-[380px] rounded-2xl overflow-hidden">
+        <div className="relative h-95 rounded-2xl overflow-hidden">
           <Image
             src={image}
             alt={title}
