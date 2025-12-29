@@ -61,8 +61,8 @@ const Navbar = () => {
               <FiShoppingCart size={24} />
             </button>
           </Link>
-          <Link href={"/login"}>
-            <button className="btn btn-primary btn-outline">Login</button>
+          <Link href={"/login"} className="btn btn-primary btn-outline">
+            Login
           </Link>
         </div>
       </div>
