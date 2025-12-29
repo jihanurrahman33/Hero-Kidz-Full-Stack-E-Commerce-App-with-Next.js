@@ -1,6 +1,7 @@
 import { loginUser } from "@/actions/server/auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import { collections, dbConnect } from "./dbConnect";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -23,4 +24,35 @@ export const authOptions = {
     }),
     // ...add more providers here
   ],
+  callbacks: {
+    async signIn({ user, account, profile, email, credentials }) {
+      const isExist = (await dbConnect(collections.USERS)).findOne({
+        email: user.email,
+        provider: account?.provider,
+      });
+      if (isExist) return true;
+
+      const newUser = {
+        providerId: account.provider,
+        name: user.name,
+        email: user.email,
+        image: user.image,
+        role: "user",
+      };
+      const result = await (
+        await dbConnect(collections.USERS)
+      ).insertOne(newUser);
+      return result.acknowledged;
+      // return true;
+    },
+    // async redirect({ url, baseUrl }) {
+    //   return baseUrl;
+    // },
+    // async session({ session, token, user }) {
+    //   return session;
+    // },
+    // async jwt({ token, user, account, profile, isNewUser }) {
+    //   return token;
+    // },
+  },
 };

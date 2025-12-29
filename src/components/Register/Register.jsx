@@ -1,13 +1,17 @@
 "use client";
 import { postUser } from "@/actions/server/auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React from "react";
 import { FaEnvelope, FaLock, FaUser } from "react-icons/fa";
 import SocialButton from "../buttons/SocialButton";
+import { signIn } from "next-auth/react";
+import Swal from "sweetalert2";
 
 const Register = () => {
   const router = useRouter();
+  const params = useSearchParams();
+  const callbackUrl = params.get("callbackUrl") || "/";
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -22,9 +26,21 @@ const Register = () => {
       password,
     };
     const result = await postUser(registrationData);
+
     if (result.acknowledged) {
-      alert("Registration successful! Please login.");
-      router.push("/login");
+      //router.push("/login");
+      const result = await signIn("credentials", {
+        email,
+        password,
+        callbackUrl,
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Registration Successful",
+        text: "You have been registered and logged in successfully.",
+      });
+      form.reset();
     }
 
     // Handle registration logic here
