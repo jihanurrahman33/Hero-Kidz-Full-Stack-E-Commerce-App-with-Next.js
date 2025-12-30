@@ -22,13 +22,13 @@ const Login = () => {
     const result = await signIn("credentials", {
       email: userData.email,
       password: userData.password,
-      //redirect: false,
+      redirect: false,
       callbackUrl: params.get("callbackUrl") || "/",
     });
     if (!result.ok) {
       Swal.fire({
         icon: "error",
-        title: "Login Failed",
+        title: "Login Failed. Try Google Login / Register",
         text: "Invalid email or password. Please try again.",
       });
     } else {
@@ -37,6 +37,7 @@ const Login = () => {
         title: "Login Successful",
         text: "You have been logged in successfully.",
       });
+      router.push(callBack);
       form.reset();
     }
   };

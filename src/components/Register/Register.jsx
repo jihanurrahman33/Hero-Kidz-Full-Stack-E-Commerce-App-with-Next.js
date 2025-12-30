@@ -32,15 +32,24 @@ const Register = () => {
       const result = await signIn("credentials", {
         email,
         password,
+        redirect: false,
         callbackUrl,
       });
-
+      if (result.ok) {
+        Swal.fire({
+          icon: "success",
+          title: "Registration Successful",
+          text: "You have been registered and logged in successfully.",
+        });
+        form.reset();
+        router.push(callbackUrl);
+      }
+    } else {
       Swal.fire({
-        icon: "success",
-        title: "Registration Successful",
-        text: "You have been registered and logged in successfully.",
+        icon: "error",
+        title: "Registration Failed",
+        text: "An account with this email may already exist. Please try again.",
       });
-      form.reset();
     }
 
     // Handle registration logic here
