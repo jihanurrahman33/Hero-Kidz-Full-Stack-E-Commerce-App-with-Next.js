@@ -14,6 +14,7 @@ const CartItem = ({ item, removeItem, updateQuantity }) => {
   const { title, price, quantity, image, _id } = item;
   const [loading, setLoading] = useState(false);
   const handleDeleteCart = async () => {
+    setLoading(true);
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -34,6 +35,7 @@ const CartItem = ({ item, removeItem, updateQuantity }) => {
           Swal.fire("Error!", "There was an error deleting the item.", "error");
         }
       }
+      setLoading(false);
     });
   };
   const onIncrease = async () => {

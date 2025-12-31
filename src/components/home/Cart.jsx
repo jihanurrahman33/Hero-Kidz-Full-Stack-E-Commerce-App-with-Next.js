@@ -1,6 +1,7 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import CartItem from "../CartItem";
+import Link from "next/link";
 
 const Cart = ({ cartItem = [] }) => {
   const [items, setItems] = useState(cartItem);
@@ -79,12 +80,13 @@ const Cart = ({ cartItem = [] }) => {
             </div>
           </div>
 
-          <button
+          <Link
+            href={"/checkout"}
             className="btn btn-primary w-full mt-5"
             disabled={!items.length}
           >
             Confirm Order
-          </button>
+          </Link>
         </div>
       </div>
     </div>

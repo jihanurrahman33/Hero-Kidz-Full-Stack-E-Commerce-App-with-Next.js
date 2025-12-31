@@ -96,3 +96,13 @@ export const decreaseItemDb = async (id, quantity) => {
   const result = await (await cartCollection).updateOne(query, updatedData);
   return { success: Boolean(result.modifiedCount) };
 };
+
+export const clearCart = async () => {
+  const user = await getServerSession(authOptions);
+  if (!user) return { success: false };
+
+  const query = { email: user?.email };
+
+  const result = await (await cartCollection).deleteMany(query);
+  return { success: Boolean(result.deletedCount) };
+};
