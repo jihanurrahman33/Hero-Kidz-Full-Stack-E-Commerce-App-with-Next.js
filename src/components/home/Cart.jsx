@@ -21,72 +21,85 @@ const Cart = ({ cartItem = [] }) => {
   };
 
   const updateQuantity = (id, quantity) => {
-    setItems((prevItems) =>
-      prevItems.map((item) => (item._id === id ? { ...item, quantity } : item))
+    setItems((prev) =>
+      prev.map((item) => (item._id === id ? { ...item, quantity } : item))
     );
   };
 
   return (
-    <div>
-      <p className="px-4 py-3">
+    <div className="max-w-7xl mx-auto">
+      {/* Header */}
+      <p className="px-4 py-3 text-sm sm:text-base">
         <span className="text-primary font-bold">{items.length}</span> Items
         Found in the Cart
       </p>
 
       {/* MAIN LAYOUT */}
-      <div className="flex gap-6 p-4">
-        {/* LEFT SIDE — CART ITEMS */}
-        <div className="w-2/3 space-y-4">
-          {items.map((item) => (
-            <CartItem
-              key={item._id.toString()}
-              item={item}
-              updateQuantity={updateQuantity}
-              removeItem={removeItem}
-            />
-          ))}
+      <div className="flex flex-col lg:flex-row gap-6 p-4">
+        {/* CART ITEMS */}
+        <div className="w-full lg:w-2/3 space-y-4">
+          {items.length ? (
+            items.map((item) => (
+              <CartItem
+                key={item._id.toString()}
+                item={item}
+                updateQuantity={updateQuantity}
+                removeItem={removeItem}
+              />
+            ))
+          ) : (
+            <p className="text-center text-gray-500 py-10">
+              Your cart is empty
+            </p>
+          )}
         </div>
 
-        {/* RIGHT SIDE — SUMMARY */}
-        <div className="w-1/3 bg-white rounded-xl shadow-md p-5 h-fit sticky top-4">
-          <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
+        {/* ORDER SUMMARY */}
+        <div className="w-full lg:w-1/3">
+          <div className="bg-white rounded-xl shadow-md p-5 lg:sticky lg:top-4">
+            <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
 
-          <div className="space-y-3">
-            {items.map((item) => (
-              <div
-                key={item._id}
-                className="flex justify-between text-sm border-b pb-2"
-              >
-                <div>
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-gray-500">
-                    Qty: {item.quantity} × ৳{item.price}
-                  </p>
+            {/* Item List */}
+            <div className="space-y-3 max-h-60 overflow-auto">
+              {items.map((item) => (
+                <div
+                  key={item._id}
+                  className="flex justify-between text-sm border-b pb-2"
+                >
+                  <div>
+                    <p className="font-medium line-clamp-1">{item.title}</p>
+                    <p className="text-gray-500">
+                      Qty: {item.quantity} × ৳{item.price}
+                    </p>
+                  </div>
+                  <p className="font-semibold">৳{item.price * item.quantity}</p>
                 </div>
-                <p className="font-semibold">৳{item.price * item.quantity}</p>
+              ))}
+            </div>
+
+            {/* Totals */}
+            <div className="mt-4 space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span>Total Items</span>
+                <span>{totalItems}</span>
               </div>
-            ))}
-          </div>
 
-          <div className="mt-4 space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span>Total Items</span>
-              <span>{totalItems}</span>
+              <div className="flex justify-between font-semibold text-lg">
+                <span>Total Price</span>
+                <span>৳{totalPrice}</span>
+              </div>
             </div>
 
-            <div className="flex justify-between font-semibold text-lg">
-              <span>Total Price</span>
-              <span>৳{totalPrice}</span>
-            </div>
+            {/* CTA */}
+            <Link
+              href="/checkout"
+              className={`btn btn-primary w-full mt-5 ${
+                !items.length && "btn-disabled"
+              }`}
+            >
+              Confirm Order
+            </Link>
           </div>
-
-          <Link
-            href={"/checkout"}
-            className="btn btn-primary w-full mt-5"
-            disabled={!items.length}
-          >
-            Confirm Order
-          </Link>
         </div>
       </div>
     </div>

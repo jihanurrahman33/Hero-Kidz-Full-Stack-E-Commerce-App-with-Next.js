@@ -6,9 +6,12 @@ const nextConfig = {
         protocol: "https",
         hostname: "i.ibb.co.com",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
     ],
   },
-  /* config options here */
 };
 
 export default nextConfig;
