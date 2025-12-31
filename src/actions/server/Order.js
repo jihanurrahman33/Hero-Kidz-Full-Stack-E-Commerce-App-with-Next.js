@@ -5,6 +5,7 @@ import { clearCart, getCart } from "./cart";
 import { authOptions } from "@/lib/authOptions";
 import { sendEmail } from "@/lib/sendEmail";
 import { invoiceTemplate } from "@/lib/orderInvoice";
+import { ObjectId } from "mongodb";
 
 const { dbConnect, collections } = require("@/lib/dbConnect");
 
@@ -18,6 +19,12 @@ export const createOrder = async (orderData) => {
   if (cart.cart.length === 0) {
     return { success: false, message: "Cart is empty" };
   }
+
+  // const products = cart.cart.map((item) => ({
+  //   _id: new ObjectId(item.productId),
+  //   quantity: item.quantity,
+  // }));
+
   const total = cart.cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
@@ -26,6 +33,7 @@ export const createOrder = async (orderData) => {
     createdAt: new Date().toISOString(),
     items: cart.cart,
     ...orderData,
+    totalPrice: total,
   };
   const result = (await ordersCollection).insertOne(newOrder);
 
