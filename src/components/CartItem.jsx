@@ -1,12 +1,18 @@
 "use client";
 
-import { deleteItemsFromCart } from "@/actions/server/cart";
+import {
+  decreaseItemDb,
+  deleteItemsFromCart,
+  increaseItemDb,
+} from "@/actions/server/cart";
 import Image from "next/image";
+import { useState } from "react";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 
-const CartItem = ({ item, onIncrease, onDecrease }) => {
+const CartItem = ({ item, removeItem, updateQuantity }) => {
   const { title, price, quantity, image, _id } = item;
+  const [loading, setLoading] = useState(false);
   const handleDeleteCart = async () => {
     Swal.fire({
       title: "Are you sure?",
@@ -21,12 +27,44 @@ const CartItem = ({ item, onIncrease, onDecrease }) => {
         const result = await deleteItemsFromCart(_id);
 
         if (result.success) {
+          removeItem(_id);
+
           Swal.fire("Deleted!", "Your item has been deleted.", "success");
         } else {
           Swal.fire("Error!", "There was an error deleting the item.", "error");
         }
       }
     });
+  };
+  const onIncrease = async () => {
+    setLoading(true);
+    const result = await increaseItemDb(_id, quantity);
+    if (result.success) {
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Item quantity increased",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      updateQuantity(_id, quantity + 1);
+    }
+    setLoading(false);
+  };
+  const onDecrease = async () => {
+    setLoading(true);
+    const result = await decreaseItemDb(_id, quantity);
+    if (result.success) {
+      Swal.fire({
+        position: "top-end",
+        icon: "success",
+        title: "Item quantity decreased",
+        showConfirmButton: false,
+        timer: 1000,
+      });
+      updateQuantity(_id, quantity - 1);
+    }
+    setLoading(false);
   };
   return (
     <div className="flex items-center gap-4 bg-white  rounded-xl p-4 shadow-sm hover:shadow-md transition">
@@ -50,13 +88,21 @@ const CartItem = ({ item, onIncrease, onDecrease }) => {
 
         {/* Quantity Controller */}
         <div className="flex items-center gap-2 mt-3">
-          <button onClick={onDecrease} className="btn btn-sm btn-outline">
+          <button
+            onClick={onDecrease}
+            disabled={quantity <= 1 || loading}
+            className="btn btn-sm btn-outline"
+          >
             <FaMinus />
           </button>
 
           <span className="px-3 font-semibold">{quantity}</span>
 
-          <button onClick={onIncrease} className="btn btn-sm btn-outline">
+          <button
+            disabled={quantity >= 10 || loading}
+            onClick={onIncrease}
+            className="btn btn-sm btn-outline"
+          >
             <FaPlus />
           </button>
         </div>

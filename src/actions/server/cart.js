@@ -58,8 +58,41 @@ export const deleteItemsFromCart = async (productId) => {
   const query = { _id: new ObjectId(productId) };
 
   const result = await (await cartCollection).deleteOne(query);
-  if (Boolean(result.deletedCount)) {
-    revalidatePath("/cart");
-  }
+  // if (Boolean(result.deletedCount)) {
+  //   revalidatePath("/cart");
+  // }
   return { success: Boolean(result.deletedCount) };
+};
+
+export const increaseItemDb = async (id, quantity) => {
+  const user = await getServerSession(authOptions);
+  if (!user) return { success: false };
+  // Logic to increase item quantity in the database
+  if (quantity >= 10) {
+    return { success: false, message: "Maximum quantity reached" };
+  }
+  const query = { _id: new ObjectId(id) };
+  const updatedData = {
+    $inc: {
+      quantity: 1,
+    },
+  };
+  const result = await (await cartCollection).updateOne(query, updatedData);
+  return { success: Boolean(result.modifiedCount) };
+};
+export const decreaseItemDb = async (id, quantity) => {
+  const user = await getServerSession(authOptions);
+  if (!user) return { success: false };
+  // Logic to increase item quantity in the database
+  if (quantity <= 1) {
+    return { success: false, message: "Quantity can not be less than 1" };
+  }
+  const query = { _id: new ObjectId(id) };
+  const updatedData = {
+    $inc: {
+      quantity: -1,
+    },
+  };
+  const result = await (await cartCollection).updateOne(query, updatedData);
+  return { success: Boolean(result.modifiedCount) };
 };
