@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 // This function can be marked `async` if using `await` inside
 const privateRoute = ["/dashboard", "/profile", "/cart", "/checkout"];
 export async function proxy(req) {
-  const token = await getToken({ req });
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const isAuthenticated = Boolean(token);
   const reqPath = req.nextUrl.pathname;
   const isPrivateReq = privateRoute.some((route) =>
