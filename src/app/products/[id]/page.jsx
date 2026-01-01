@@ -121,6 +121,8 @@ const ProductDetails = async ({ params }) => {
         </div>
       </div>
 
+
+      
       {/* Description */}
       <div className="mt-10">
         <h2 className="text-xl font-semibold mb-3">Description</h2>
@@ -143,6 +145,30 @@ const ProductDetails = async ({ params }) => {
             </div>
           ))}
         </div>
+      </div>
+      
+       {/* Similar Products */}
+       <SimilarProductsSection id={id} />
+    </div>
+  );
+};
+
+// Async component to fetch and display similar products
+const SimilarProductsSection = async ({ id }) => {
+  const { getSimilarProducts } = await import("@/actions/server/recommendation");
+  const similarProducts = await getSimilarProducts(id);
+
+  if (!similarProducts || similarProducts.length === 0) return null;
+
+  const { default: ProductCard } = await import("@/components/cards/ProductCard");
+
+  return (
+    <div className="mt-16 border-t pt-10">
+      <h2 className="text-2xl font-bold mb-6">Similar Products</h2>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {similarProducts.map((product) => (
+          <ProductCard key={product._id} product={product} />
+        ))}
       </div>
     </div>
   );
