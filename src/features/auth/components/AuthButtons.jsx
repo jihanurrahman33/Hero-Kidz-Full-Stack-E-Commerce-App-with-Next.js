@@ -36,6 +36,13 @@ const AuthButtons = () => {
         .slice(0, 2)
     : "U";
 
+  const closeDropdown = () => {
+    const elem = document.activeElement;
+    if (elem) {
+      elem.blur();
+    }
+  };
+
   return (
     <div className="dropdown dropdown-end">
       <div
@@ -88,6 +95,7 @@ const AuthButtons = () => {
           {role === "admin" && (
             <Link
               href="/dashboard"
+              onClick={closeDropdown}
               className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors"
             >
               <div className="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
@@ -101,6 +109,7 @@ const AuthButtons = () => {
           )}
           <Link
             href="/profile"
+            onClick={closeDropdown}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors"
           >
             <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-500 flex items-center justify-center">
@@ -114,6 +123,7 @@ const AuthButtons = () => {
 
           <Link
             href="/orders"
+            onClick={closeDropdown}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors"
           >
             <div className="w-8 h-8 rounded-lg bg-orange-50 text-orange-500 flex items-center justify-center">
@@ -127,6 +137,7 @@ const AuthButtons = () => {
 
           <Link
             href="/cart"
+            onClick={closeDropdown}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors"
           >
             <div className="w-8 h-8 rounded-lg bg-teal-50 text-teal-500 flex items-center justify-center">
@@ -140,6 +151,7 @@ const AuthButtons = () => {
 
           <Link
             href="/products"
+            onClick={closeDropdown}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-base-200 transition-colors"
           >
             <div className="w-8 h-8 rounded-lg bg-pink-50 text-pink-500 flex items-center justify-center">
@@ -155,7 +167,10 @@ const AuthButtons = () => {
         {/* Logout */}
         <div className="px-2 pb-3">
           <button
-            onClick={() => signOut()}
+            onClick={() => {
+              signOut();
+              closeDropdown();
+            }}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl w-full hover:bg-red-50 transition-colors text-error"
           >
             <div className="w-8 h-8 rounded-lg bg-red-50 text-red-500 flex items-center justify-center">
