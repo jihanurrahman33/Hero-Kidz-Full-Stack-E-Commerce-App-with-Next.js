@@ -8,7 +8,7 @@ import {
   increaseItemDb,
   decreaseItemDb,
   clearCart as clearCartDb,
-} from "@/actions/server/cart";
+} from "@/features/cart/actions/cart.actions";
 import useAuth from "@/hooks/useAuth";
 
 const CartContext = createContext();

@@ -1,4 +1,4 @@
-import Products from "@/components/home/Products";
+import { ProductGrid } from "@/features/products";
 import React from "react";
 
 export const metadata = {
@@ -11,7 +11,7 @@ export const metadata = {
 const ProductsPage = () => {
   return (
     <div>
-      <Products></Products>
+      <ProductGrid />
     </div>
   );
 };

@@ -3,17 +3,20 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Navbar from "@/components/layouts/Navbar";
 import Footer from "@/components/layouts/Footer";
+import { CartProvider } from "@/contexts/CartContext";
+import "sweetalert2/dist/sweetalert2.min.css";
+import NextAuthProvider from "@/provider/NextAuthProvider";
 
 const poppins = Poppins({
   weight: ["100", "200", "400", "500", "600", "800"],
+  subsets: ["latin"],
 });
 export const fontBangla = localFont({
   src: "../../src/fonts/mayaboti-normal.ttf",
 });
 
 import "./globals.css";
-import NextAuthProvider from "@/provider/NextAuthProvider";
-import { CartProvider } from "@/contexts/CartContext";
+
 
 export const metadata = {
   // ---------------- BASIC ----------------

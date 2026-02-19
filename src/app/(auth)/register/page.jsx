@@ -1,11 +1,17 @@
-import Register from "@/components/Register/Register";
+import { RegisterForm } from "@/features/auth";
 import React from "react";
+import { Suspense } from "react";
+
+export const metadata = {
+  title: "Register",
+  description: "Create a new account on Hero Kidz",
+};
 
 const RegisterPage = () => {
   return (
-    <div>
-      <Register></Register>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <RegisterForm />
+    </Suspense>
   );
 };
 

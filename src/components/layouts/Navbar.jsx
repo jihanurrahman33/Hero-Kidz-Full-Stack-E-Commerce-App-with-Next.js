@@ -5,7 +5,7 @@ import Logo from "./Logo";
 import Link from "next/link";
 import NavLink from "../buttons/NavLink";
 import { FiShoppingCart } from "react-icons/fi";
-import AuthButtons from "../buttons/AuthButtons";
+import { AuthButtons } from "@/features/auth";
 import { useCart } from "@/contexts/CartContext";
 
 const Navbar = () => {

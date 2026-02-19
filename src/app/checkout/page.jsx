@@ -1,19 +1,13 @@
-"use client";
-
-import Checkout from "@/components/home/Checkout";
+import { CheckoutForm } from "@/features/checkout";
 import React from "react";
 
-const CheckOutPage = () => {
-  return (
-    <div>
-      <div className="">
-        <h2 className="text-4xl py-4 font-bold border-l-8 border-primary pl-8">
-          Check Out Now
-        </h2>
-      </div>
-      <Checkout />
-    </div>
-  );
+export const metadata = {
+  title: "Checkout",
+  description: "Complete your purchase securely",
 };
 
-export default CheckOutPage;
+const CheckoutPage = () => {
+    return <CheckoutForm />;
+};
+
+export default CheckoutPage;

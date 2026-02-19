@@ -1,19 +1,13 @@
-"use client";
-
-import Cart from "@/components/home/Cart";
+import { Cart } from "@/features/cart";
 import React from "react";
 
+export const metadata = {
+  title: "My Cart",
+  description: "View and manage items in your cart",
+};
+
 const CartPage = () => {
-  return (
-    <div>
-      <div className="">
-        <h2 className="text-4xl py-4 font-bold border-l-8 border-primary pl-8">
-          My Cart
-        </h2>
-      </div>
-      <Cart />
-    </div>
-  );
+  return <Cart />;
 };
 
 export default CartPage;
