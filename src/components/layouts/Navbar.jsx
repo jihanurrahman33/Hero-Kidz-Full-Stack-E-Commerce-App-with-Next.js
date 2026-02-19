@@ -9,23 +9,30 @@ import { AuthButtons } from "@/features/auth";
 import { useCart } from "@/contexts/CartContext";
 
 const Navbar = () => {
-    const { cartCount } = useCart();
-  const nav = (
-    <>
-      <li>
-        <NavLink href="/">Home</NavLink>
-      </li>
-      <li>
-        <NavLink href="/products">Products</NavLink>
-      </li>
-      <li>
-        <NavLink href="/blog">Blog</NavLink>
-      </li>
-      <li>
-        <NavLink href="/contact">Contact</NavLink>
-      </li>
-    </>
-  );
+  const { cartCount } = useCart();
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/products", label: "Products" },
+    { href: "/blog", label: "Blog" },
+    { href: "/contact", label: "Contact" },
+  ];
+
+  const closeMenu = () => {
+    const elem = document.activeElement;
+    if (elem) {
+      elem?.blur();
+    }
+  };
+
+  const navItems = navLinks.map((link) => (
+    <li key={link.href}>
+      <NavLink href={link.href} onClick={closeMenu}>
+        {link.label}
+      </NavLink>
+    </li>
+  ));
+
   return (
     <div>
       <div className="navbar bg-base-100 ">
@@ -49,16 +56,24 @@ const Navbar = () => {
               </svg>
             </div>
             <ul
-              tabIndex="-1"
+              tabIndex={0}
               className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
             >
-              {nav}
+              {navItems}
             </ul>
           </div>
           <Logo />
         </div>
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">{nav}</ul>
+          <ul className="menu menu-horizontal px-1">
+            {navLinks.map((link) => (
+                <li key={link.href}>
+                <NavLink href={link.href}>
+                    {link.label}
+                </NavLink>
+                </li>
+            ))}
+          </ul>
         </div>
         <div className="navbar-end space-x-4">
           <Link href={"/cart"}>

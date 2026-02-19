@@ -8,7 +8,7 @@ import useAlert from "@/hooks/useAlert";
 import useAsync from "@/hooks/useAsync";
 
 
-const CartButton = ({ product }) => {
+const CartButton = ({ product, redirectPath }) => {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { addToCart } = useCart();
   const { showSuccess, showError } = useAlert();
@@ -23,6 +23,9 @@ const CartButton = ({ product }) => {
             const result = await addToCart(product._id);
             if (result.success) {
                 showSuccess("Added to Cart", "Product has been added to your cart.");
+                if (redirectPath) {
+                    router.push(redirectPath);
+                }
             } else {
                 showError("Add to Cart Failed", "Could not add product to cart. Please try again.");
             }

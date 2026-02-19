@@ -3,6 +3,11 @@ import React from "react";
 import Image from "next/image";
 import { FaStar, FaShoppingCart, FaTag } from "react-icons/fa";
 import CartButton from "@/features/cart/components/CartButton";
+import { useRouter, usePathname } from "next/navigation";
+import { useCart } from "@/contexts/CartContext";
+import useAuth from "@/hooks/useAuth";
+import useAlert from "@/hooks/useAlert";
+import useAsync from "@/hooks/useAsync";
 
 const ProductDetails = ({ product }) => {
   const {
@@ -18,6 +23,31 @@ const ProductDetails = ({ product }) => {
     ageRange,
     recommendationText,
   } = product;
+
+  const router = useRouter();
+  const path = usePathname();
+  const { addToCart } = useCart();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { showSuccess, showError } = useAlert();
+  const { execute, loading } = useAsync();
+
+
+  const handleBuyNow = async () => {
+    if (isAuthenticated) {
+        await execute(async () => {
+            const result = await addToCart(product._id);
+            if (result.success) {
+                setTimeout(() => {
+                     router.push("/checkout");
+                }, 500); 
+            } else {
+                showError("Order Failed", "Could not proceed to checkout. Please try again.");
+            }
+        });
+    } else {
+      router.push(`/login?callbackUrl=${path}`);
+    }
+  };
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
@@ -105,10 +135,14 @@ const ProductDetails = ({ product }) => {
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 pt-4">
           <div className="flex-1">
-             <CartButton product={product} />
+             <CartButton product={product} redirectPath="/cart" />
           </div>
           
-          <button className="btn btn-outline btn-primary flex-1">
+          <button 
+            disabled={loading || authLoading}
+            onClick={handleBuyNow}
+            className="btn btn-outline btn-primary flex-1"
+          >
             Buy Now
           </button>
         </div>
