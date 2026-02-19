@@ -53,7 +53,14 @@ export const getCart = cache(async () => {
   const query = { email: user.email };
   const cartItems = await (await cartCollection).find(query).toArray();
 
-  return { success: true, cart: cartItems };
+  // Serialize ObjectIds for client components
+  const serializedCart = cartItems.map((item) => ({
+    ...item,
+    _id: item._id?.toString?.() || item._id,
+    productId: item.productId?.toString?.() || item.productId,
+  }));
+
+  return { success: true, cart: serializedCart };
 });
 
 export const deleteItemsFromCart = async (productId) => {
