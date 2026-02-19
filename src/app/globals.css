@@ -23,4 +23,3 @@
   --color-success: oklch(70% 0.17 145);
   --color-error: oklch(62% 0.24 28);
 }
-@custom-variant dark (&:where([data-theme=night], [data-theme=night] *));

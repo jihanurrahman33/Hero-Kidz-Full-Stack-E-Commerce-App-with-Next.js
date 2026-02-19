@@ -1,4 +1,5 @@
 import { getSingleProduct, ProductDetails, SimilarProducts } from "@/features/products";
+import Breadcrumbs from "@/components/ui/Breadcrumbs";
 import React from "react";
 
 export async function generateMetadata({ params }) {
@@ -19,6 +20,10 @@ const ProductDetailsPage = async ({ params }) => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
+            <Breadcrumbs items={[
+                { label: "Products", href: "/products" },
+                { label: product?.title || "Details" },
+            ]} />
             <ProductDetails product={product} />
             <SimilarProducts id={id} />
         </div>

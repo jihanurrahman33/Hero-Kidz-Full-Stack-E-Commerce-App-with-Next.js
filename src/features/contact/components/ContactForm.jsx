@@ -1,11 +1,14 @@
 "use client";
 import React from "react";
 import useAlert from "@/hooks/useAlert";
+import useAsync from "@/hooks/useAsync";
+import { submitContactForm } from "../actions/contact.actions";
 
 const ContactForm = () => {
-  const { showSuccess } = useAlert();
+  const { showSuccess, showError } = useAlert();
+  const { execute, loading } = useAsync();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
 
@@ -15,15 +18,15 @@ const ContactForm = () => {
       message: form.message.value,
     };
 
-    console.log("Contact Payload:", payload);
-
-    // Temporary success feedback (can connect API later)
-    showSuccess(
-        "Message Sent!",
-        "We will get back to you as soon as possible."
-    );
-
-    form.reset();
+    await execute(async () => {
+      const result = await submitContactForm(payload);
+      if (result.success) {
+        showSuccess("Message Sent!", "We will get back to you as soon as possible.");
+        form.reset();
+      } else {
+        showError("Failed", result.message || "Something went wrong.");
+      }
+    });
   };
 
   return (
@@ -40,10 +43,10 @@ const ContactForm = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* LEFT — Contact Info */}
         <div className="space-y-6">
-          <div className="bg-white shadow-md rounded-xl p-6">
+          <div className="bg-base-200 shadow-md rounded-xl p-6">
             <h2 className="text-xl font-semibold mb-4">Get in Touch</h2>
 
-            <div className="space-y-3 text-gray-700">
+            <div className="space-y-3">
               <p>
                 📍 <span className="font-medium">Address:</span> Dhaka,
                 Bangladesh
@@ -53,7 +56,7 @@ const ContactForm = () => {
               </p>
               <p>
                 ✉️ <span className="font-medium">Email:</span>{" "}
-                support@example.com
+                support@herokidz.com
               </p>
             </div>
           </div>
@@ -69,7 +72,7 @@ const ContactForm = () => {
         {/* RIGHT — Contact Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white shadow-md rounded-xl p-6 space-y-4"
+          className="bg-base-200 shadow-md rounded-xl p-6 space-y-4"
         >
           <h2 className="text-xl font-semibold mb-3">Send Us a Message</h2>
 
@@ -97,8 +100,12 @@ const ContactForm = () => {
             required
           />
 
-          <button type="submit" className="btn btn-primary w-full">
-            Send Message
+          <button
+            type="submit"
+            disabled={loading}
+            className="btn btn-primary w-full"
+          >
+            {loading ? "Sending..." : "Send Message"}
           </button>
         </form>
       </div>
