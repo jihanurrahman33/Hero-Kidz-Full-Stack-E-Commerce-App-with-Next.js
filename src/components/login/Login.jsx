@@ -3,14 +3,16 @@ import Link from "next/link";
 import React from "react";
 import { FaEnvelope, FaLock } from "react-icons/fa";
 import { signIn } from "next-auth/react";
-import Swal from "sweetalert2";
 import { useRouter, useSearchParams } from "next/navigation";
 import SocialButton from "../buttons/SocialButton";
+import useAlert from "@/hooks/useAlert";
 
 const Login = () => {
   const params = useSearchParams();
   const router = useRouter();
   const callBack = params.get("callbackUrl") || "/";
+  const { showSuccess, showError } = useAlert();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -26,17 +28,9 @@ const Login = () => {
       callbackUrl: params.get("callbackUrl") || "/",
     });
     if (!result.ok) {
-      Swal.fire({
-        icon: "error",
-        title: "Login Failed. Try Google Login / Register",
-        text: "Invalid email or password. Please try again.",
-      });
+      showError("Login Failed. Try Google Login / Register", "Invalid email or password. Please try again.");
     } else {
-      Swal.fire({
-        icon: "success",
-        title: "Login Successful",
-        text: "You have been logged in successfully.",
-      });
+      showSuccess("Login Successful", "You have been logged in successfully.");
       router.push(callBack);
       form.reset();
     }

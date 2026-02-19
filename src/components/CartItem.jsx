@@ -1,73 +1,54 @@
 "use client";
 
-import {
-  decreaseItemDb,
-  deleteItemsFromCart,
-  increaseItemDb,
-} from "@/actions/server/cart";
 import Image from "next/image";
-import { useState } from "react";
 import { FaPlus, FaMinus, FaTrash } from "react-icons/fa";
-import Swal from "sweetalert2";
+import { useCart } from "@/contexts/CartContext";
+import useAlert from "@/hooks/useAlert";
+import useAsync from "@/hooks/useAsync";
 
-const CartItem = ({ item, removeItem, updateQuantity }) => {
+const CartItem = ({ item }) => {
   const { title, price, quantity, image, _id } = item;
-  const [loading, setLoading] = useState(false);
+  const { removeFromCart, increaseQty, decreaseQty } = useCart();
+  const { confirmAction, showSuccess, showError } = useAlert();
+  const { execute, loading } = useAsync();
+
   const handleDeleteCart = async () => {
-    setLoading(true);
-    Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        const result = await deleteItemsFromCart(_id);
+    const confirmed = await confirmAction(
+        "Are you sure?",
+        "You won't be able to revert this!",
+        "Yes, delete it!"
+    );
 
-        if (result.success) {
-          removeItem(_id);
-
-          Swal.fire("Deleted!", "Your item has been deleted.", "success");
-        } else {
-          Swal.fire("Error!", "There was an error deleting the item.", "error");
-        }
-      }
-      setLoading(false);
-    });
+    if (confirmed) {
+        await execute(async () => {
+             const result = await removeFromCart(_id);
+             if (result.success) {
+                 showSuccess("Deleted!", "Your item has been deleted.");
+             } else {
+                 showError("Error!", "There was an error deleting the item.");
+             }
+        });
+    }
   };
+
   const onIncrease = async () => {
-    setLoading(true);
-    const result = await increaseItemDb(_id, quantity);
-    if (result.success) {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Item quantity increased",
-        showConfirmButton: false,
-        timer: 1000,
+      await execute(async () => {
+          const result = await increaseQty(_id, quantity);
+          if (result.success) {
+              // showToast("Item quantity increased"); // Optional: logic moved to context or just optimistic update
+          }
       });
-      updateQuantity(_id, quantity + 1);
-    }
-    setLoading(false);
   };
+
   const onDecrease = async () => {
-    setLoading(true);
-    const result = await decreaseItemDb(_id, quantity);
-    if (result.success) {
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: "Item quantity decreased",
-        showConfirmButton: false,
-        timer: 1000,
+       await execute(async () => {
+          const result = await decreaseQty(_id, quantity);
+          if (result.success) {
+              // showToast("Item quantity decreased");
+          }
       });
-      updateQuantity(_id, quantity - 1);
-    }
-    setLoading(false);
   };
+
   return (
     <div className="flex items-center gap-4 bg-white  rounded-xl p-4 shadow-sm hover:shadow-md transition">
       {/* Product Image */}
@@ -115,6 +96,7 @@ const CartItem = ({ item, removeItem, updateQuantity }) => {
         <button
           onClick={handleDeleteCart}
           className="btn btn-sm btn-error btn-outline"
+          disabled={loading}
         >
           <FaTrash />
         </button>

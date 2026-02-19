@@ -1,13 +1,14 @@
 "use client";
-import { signOut, useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
+import useAuth from "@/hooks/useAuth";
 
 const AuthButtons = () => {
-  const session = useSession();
+  const { isAuthenticated } = useAuth();
   return (
     <div>
-      {session.status === "authenticated" ? (
+      {isAuthenticated ? (
         <button
           onClick={() => signOut()}
           className="btn btn-outline btn-primary"

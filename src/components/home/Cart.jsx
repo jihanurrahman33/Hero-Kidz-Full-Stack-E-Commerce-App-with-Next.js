@@ -1,30 +1,15 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React from "react";
 import CartItem from "../CartItem";
 import Link from "next/link";
+import { useCart } from "@/contexts/CartContext";
 
-const Cart = ({ cartItem = [] }) => {
-  const [items, setItems] = useState(cartItem);
+const Cart = () => {
+    const { items, cartTotal, loading } = useCart();
 
-  const totalItems = useMemo(
-    () => items.reduce((total, item) => total + item.quantity, 0),
-    [items]
-  );
-
-  const totalPrice = useMemo(
-    () => items.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [items]
-  );
-
-  const removeItem = (id) => {
-    setItems((prev) => prev.filter((item) => item._id !== id));
-  };
-
-  const updateQuantity = (id, quantity) => {
-    setItems((prev) =>
-      prev.map((item) => (item._id === id ? { ...item, quantity } : item))
-    );
-  };
+  if (loading) {
+      return <div className="text-center py-20 text-xl font-semibold">Loading Cart...</div>;
+  }
 
   return (
     <div className="max-w-7xl mx-auto">
@@ -41,10 +26,8 @@ const Cart = ({ cartItem = [] }) => {
           {items.length ? (
             items.map((item) => (
               <CartItem
-                key={item._id.toString()}
+                key={item._id}
                 item={item}
-                updateQuantity={updateQuantity}
-                removeItem={removeItem}
               />
             ))
           ) : (
@@ -81,12 +64,12 @@ const Cart = ({ cartItem = [] }) => {
             <div className="mt-4 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span>Total Items</span>
-                <span>{totalItems}</span>
+                <span>{items.reduce((total, item) => total + item.quantity, 0)}</span>
               </div>
 
               <div className="flex justify-between font-semibold text-lg">
                 <span>Total Price</span>
-                <span>৳{totalPrice}</span>
+                <span>৳{cartTotal}</span>
               </div>
             </div>
 

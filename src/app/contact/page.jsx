@@ -1,8 +1,10 @@
 "use client";
 import React from "react";
-import Swal from "sweetalert2";
+import useAlert from "@/hooks/useAlert";
 
 const ContactPage = () => {
+  const { showSuccess } = useAlert();
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -16,10 +18,9 @@ const ContactPage = () => {
     console.log("Contact Payload:", payload);
 
     // Temporary success feedback (can connect API later)
-    Swal.fire(
-      "Message Sent!",
-      "We will get back to you as soon as possible.",
-      "success"
+    showSuccess(
+        "Message Sent!",
+        "We will get back to you as soon as possible."
     );
 
     form.reset();

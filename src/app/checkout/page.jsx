@@ -1,13 +1,9 @@
-import { getCart } from "@/actions/server/cart";
+"use client";
+
 import Checkout from "@/components/home/Checkout";
 import React from "react";
 
-const CheckOutPage = async () => {
-  const cartItems = await getCart();
-  const formattedItems = cartItems.cart.map((item) => ({
-    ...item,
-    _id: item._id.toString(),
-  }));
+const CheckOutPage = () => {
   return (
     <div>
       <div className="">
@@ -15,7 +11,7 @@ const CheckOutPage = async () => {
           Check Out Now
         </h2>
       </div>
-      <Checkout cartItems={formattedItems}></Checkout>
+      <Checkout />
     </div>
   );
 };

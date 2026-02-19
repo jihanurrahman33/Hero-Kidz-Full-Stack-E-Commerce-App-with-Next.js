@@ -1,13 +1,9 @@
-import { getCart } from "@/actions/server/cart";
+"use client";
+
 import Cart from "@/components/home/Cart";
 import React from "react";
 
-const CartPage = async () => {
-  const cartItems = await getCart();
-  const formattedItems = cartItems.cart.map((item) => ({
-    ...item,
-    _id: item._id.toString(),
-  }));
+const CartPage = () => {
   return (
     <div>
       <div className="">
@@ -15,7 +11,7 @@ const CartPage = async () => {
           My Cart
         </h2>
       </div>
-      <Cart cartItem={formattedItems}></Cart>
+      <Cart />
     </div>
   );
 };

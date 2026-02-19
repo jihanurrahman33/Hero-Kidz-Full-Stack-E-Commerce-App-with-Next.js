@@ -1,18 +1,17 @@
 "use client";
 import { createOrder } from "@/actions/server/Order";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import React, { useMemo } from "react";
-import Swal from "sweetalert2";
+import React from "react";
+import { useCart } from "@/contexts/CartContext";
+import useAuth from "@/hooks/useAuth";
+import useAlert from "@/hooks/useAlert";
 
-const Checkout = ({ cartItems = [] }) => {
-  const session = useSession();
+const Checkout = () => {
+  const { items, cartTotal, clearAllItems } = useCart();
+  const { user, isLoading: authLoading } = useAuth();
+  const { showSuccess, showError } = useAlert();
   const router = useRouter();
 
-  const totalPrice = useMemo(
-    () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
-    [cartItems]
-  );
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,23 +25,28 @@ const Checkout = ({ cartItems = [] }) => {
       instruction: form.instruction.value,
     };
 
+    // Note: The original logic passed `orderPayload` directly.
+    // Ensure `createOrder` handles the clearing of cart itself OR we do it here.
+    // The original `createOrder` calls `clearCart()` server side on success.
+    // So we just need to update our client context.
+
     const result = await createOrder(orderPayload);
 
     if (result.success) {
-      Swal.fire(
+      showSuccess(
         "Order Placed!",
-        "Your order has been placed successfully.",
-        "success"
+        "Your order has been placed successfully."
       );
+      await clearAllItems(); // Update client state
       form.reset();
       router.push("/");
     } else {
-      Swal.fire("Order Failed", "Please try again.", "error");
-      router.push("/cart");
+      showError("Order Failed", result.message || "Please try again.");
+      // router.push("/cart"); // Maybe stay on checkout to retry?
     }
   };
 
-  if (session.status === "loading") {
+  if (authLoading) {
     return <p className="text-center py-10">Loading...</p>;
   }
 
@@ -62,7 +66,7 @@ const Checkout = ({ cartItems = [] }) => {
               type="text"
               name="name"
               className="input input-bordered w-full"
-              value={session?.data?.user?.name}
+              value={user?.name || ""}
               readOnly
             />
 
@@ -70,7 +74,7 @@ const Checkout = ({ cartItems = [] }) => {
               type="email"
               name="email"
               className="input input-bordered w-full"
-              value={session?.data?.user?.email}
+              value={user?.email || ""}
               readOnly
             />
           </div>
@@ -109,7 +113,7 @@ const Checkout = ({ cartItems = [] }) => {
             <h2 className="text-lg font-semibold mb-4">Order Summary</h2>
 
             <div className="space-y-3 max-h-64 overflow-auto">
-              {cartItems.map((item) => (
+              {items.map((item) => (
                 <div
                   key={item._id}
                   className="flex justify-between text-sm border-b pb-2"
@@ -127,7 +131,7 @@ const Checkout = ({ cartItems = [] }) => {
 
             <div className="mt-4 flex justify-between font-semibold text-lg">
               <span>Total</span>
-              <span>৳{totalPrice}</span>
+              <span>৳{cartTotal}</span>
             </div>
           </div>
         </div>

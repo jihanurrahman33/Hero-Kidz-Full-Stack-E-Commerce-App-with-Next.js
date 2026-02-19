@@ -1,11 +1,15 @@
+"use client";
+
 import React from "react";
 import Logo from "./Logo";
 import Link from "next/link";
 import NavLink from "../buttons/NavLink";
 import { FiShoppingCart } from "react-icons/fi";
 import AuthButtons from "../buttons/AuthButtons";
+import { useCart } from "@/contexts/CartContext";
 
 const Navbar = () => {
+    const { cartCount } = useCart();
   const nav = (
     <>
       <li>
@@ -58,9 +62,16 @@ const Navbar = () => {
         </div>
         <div className="navbar-end space-x-4">
           <Link href={"/cart"}>
-            <button className="btn btn-primary">
-              <FiShoppingCart size={24} />
-            </button>
+            <div className="indicator">
+                <button className="btn btn-primary">
+                <FiShoppingCart size={24} />
+                </button>
+                {cartCount > 0 && (
+                    <span className="badge badge-sm badge-secondary indicator-item">
+                        {cartCount}
+                    </span>
+                )}
+            </div>
           </Link>
           <AuthButtons></AuthButtons>
         </div>

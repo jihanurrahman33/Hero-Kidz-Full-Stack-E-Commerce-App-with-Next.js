@@ -1,44 +1,41 @@
 "use client";
 
-import { handleCart } from "@/actions/server/cart";
-import { useSession } from "next-auth/react";
+import React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import React, { useState } from "react";
-import Swal from "sweetalert2";
+import { useCart } from "@/contexts/CartContext";
+import useAuth from "@/hooks/useAuth";
+import useAlert from "@/hooks/useAlert";
+import useAsync from "@/hooks/useAsync";
+
 
 const CartButton = ({ product }) => {
-  const session = useSession();
-  const isLogin = session?.status == "authenticated";
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { addToCart } = useCart();
+  const { showSuccess, showError } = useAlert();
+  const { execute, loading } = useAsync();
+
   const router = useRouter();
   const path = usePathname();
-  const [isLoading, setIsLoading] = useState(false);
+
   const add2Cart = async () => {
-    setIsLoading(true);
-    if (isLogin) {
-      const result = await handleCart(product._id);
-      if (result.success) {
-        Swal.fire({
-          icon: "success",
-          title: ("Added to Cart", product?.title),
-          text: "Product has been added to your cart.",
+    if (isAuthenticated) {
+        await execute(async () => {
+            const result = await addToCart(product._id);
+            if (result.success) {
+                showSuccess("Added to Cart", "Product has been added to your cart.");
+            } else {
+                showError("Add to Cart Failed", "Could not add product to cart. Please try again.");
+            }
         });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Add to Cart Failed",
-          text: "Could not add product to cart. Please try again.",
-        });
-      }
-      setIsLoading(false);
     } else {
       router.push(`/login?callbackUrl=${path}`);
-      setIsLoading(false);
     }
   };
+
   return (
     <div className="w-full">
       <button
-        disabled={isLoading || session.status === "loading"}
+        disabled={loading || authLoading}
         onClick={add2Cart}
         className="btn btn-primary w-full"
       >
