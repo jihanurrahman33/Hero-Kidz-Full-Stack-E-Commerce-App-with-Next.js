@@ -20,6 +20,7 @@ const ProductsPage = async ({ searchParams }) => {
     minPrice: params?.minPrice || "",
     maxPrice: params?.maxPrice || "",
     sort: params?.sort || "",
+    page: params?.page || "1",
   };
 
   return (

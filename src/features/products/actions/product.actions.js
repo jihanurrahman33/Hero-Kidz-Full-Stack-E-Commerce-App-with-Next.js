@@ -13,8 +13,10 @@ export const getProducts = async () => {
 };
 
 export const getFilteredProducts = async (filters = {}) => {
-  const { search, category, minPrice, maxPrice, sort } = filters;
+  const { search, category, minPrice, maxPrice, sort, page = 1, limit = 12 } = filters;
   const query = {};
+  const currentPage = Math.max(1, Number(page));
+  const perPage = Number(limit);
 
   if (search) {
     query.title = { $regex: search, $options: "i" };
@@ -30,6 +32,12 @@ export const getFilteredProducts = async (filters = {}) => {
   }
 
   const productsCollection = await dbConnect(collections.PRODUCTS);
+
+  // Get total count for pagination
+  const pipeline = [{ $match: query }, { $count: "total" }];
+  const countResult = await productsCollection.aggregate(pipeline).toArray();
+  let total = countResult[0]?.total || 0;
+
   let cursor = productsCollection.find(query);
 
   if (sort === "price_asc") {
@@ -46,6 +54,7 @@ export const getFilteredProducts = async (filters = {}) => {
 
   let products = await cursor.toArray();
 
+  // Client-side filter for discounted price range
   if (minPrice || maxPrice) {
     products = products.filter((p) => {
       const effectivePrice = p.discount
@@ -55,9 +64,19 @@ export const getFilteredProducts = async (filters = {}) => {
       if (maxPrice && effectivePrice > Number(maxPrice)) return false;
       return true;
     });
+    total = products.length;
   }
 
-  return products.map(serialize);
+  // Apply pagination after all filtering
+  const totalPages = Math.ceil(total / perPage);
+  const paginatedProducts = products.slice((currentPage - 1) * perPage, currentPage * perPage);
+
+  return {
+    products: paginatedProducts.map(serialize),
+    total,
+    page: currentPage,
+    totalPages,
+  };
 };
 
 export const getCategories = async () => {
