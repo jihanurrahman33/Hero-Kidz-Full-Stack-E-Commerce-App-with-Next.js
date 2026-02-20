@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import {
   deleteProduct,
   addProduct,
+  updateProduct,
 } from "@/features/admin/actions/admin.actions";
 import {
   FiPlus,
@@ -13,12 +14,15 @@ import {
   FiX,
   FiChevronLeft,
   FiChevronRight,
+  FiEdit2,
 } from "react-icons/fi";
+import Swal from "sweetalert2";
 
 const ProductsManager = ({ data }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showAdd, setShowAdd] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const handleDelete = async (id, title) => {
     if (!confirm(`Delete "${title}"?`)) return;
@@ -96,9 +100,22 @@ const ProductsManager = ({ data }) => {
       setTags([""]);
       setLearningType([""]);
       setSkillsDeveloped([""]);
+      
+      Swal.fire({
+        icon: "success",
+        title: "Product Added!",
+        text: "The new product has been added successfully.",
+        confirmButtonColor: "#10b981", // Success green to match the theme (or primary color)
+      });
+
       startTransition(() => router.refresh());
     } else {
-      alert("Failed to add product");
+      Swal.fire({
+        icon: "error",
+        title: "Failed to add product",
+        text: "There was an error while adding the product. Please try again.",
+        confirmButtonColor: "#ef4444", // Error red
+      });
     }
   };
 
@@ -145,6 +162,74 @@ const ProductsManager = ({ data }) => {
           {showAdd ? "Close" : "New Product"}
         </button>
       </div>
+
+      {/* Edit Product Modal */}
+      {editingProduct && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 overflow-y-auto pt-20 pb-10">
+          <div className="bg-base-100 p-8 rounded-[2rem] shadow-xl max-w-lg w-full m-4">
+            <h3 className="font-bold text-xl mb-4 text-center">Edit Product</h3>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const form = e.target;
+                const updatedData = {
+                  title: form.title.value,
+                  price: Number(form.price.value),
+                  discount: Number(form.discount.value) || 0,
+                  category: form.category.value,
+                };
+                try {
+                  const res = await updateProduct(editingProduct._id, updatedData);
+                  if (res?.success) {
+                    Swal.fire({
+                      icon: "success",
+                      title: "Product Updated!",
+                      text: "The product has been updated successfully.",
+                      timer: 2000,
+                      showConfirmButton: false,
+                    });
+                    setEditingProduct(null);
+                    startTransition(() => router.refresh());
+                  } else {
+                    throw new Error("Update failed");
+                  }
+                } catch (error) {
+                  Swal.fire({
+                    icon: "error",
+                    title: "Update Failed",
+                    text: "Could not update the product.",
+                  });
+                }
+              }}
+              className="space-y-4"
+            >
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">Title</label>
+                <input name="title" defaultValue={editingProduct.title} className="input input-sm w-full input-bordered rounded-xl" required />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1">Price</label>
+                  <input name="price" type="number" defaultValue={editingProduct.price} className="input input-sm w-full input-bordered rounded-xl" required min={0} />
+                </div>
+                <div>
+                  <label className="text-xs text-gray-500 block mb-1">Discount (%)</label>
+                  <input name="discount" type="number" defaultValue={editingProduct.discount || 0} className="input input-sm w-full input-bordered rounded-xl" min={0} max={100} />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-gray-500 block mb-1">Category</label>
+                <input name="category" defaultValue={editingProduct.category} className="input input-sm w-full input-bordered rounded-xl" required />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 mt-6 border-t border-base-200">
+                <button type="button" onClick={() => setEditingProduct(null)} className="btn btn-ghost rounded-xl">Cancel</button>
+                <button type="submit" disabled={isPending} className="btn btn-primary rounded-xl">Save Changes</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Add Product Form */}
       {showAdd && (
@@ -332,13 +417,23 @@ const ProductsManager = ({ data }) => {
                   <td className="text-sm">{product.discount || 0}%</td>
                   <td className="text-sm">⭐ {product.ratings || 0}</td>
                   <td>
-                    <button
-                      onClick={() => handleDelete(product._id, product.title)}
-                      disabled={isPending}
-                      className="btn btn-ghost btn-sm btn-circle text-error"
-                    >
-                      <FiTrash2 size={16} />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setEditingProduct(product)}
+                        className="btn btn-ghost btn-sm btn-circle text-primary"
+                        title="Edit Product"
+                      >
+                        <FiEdit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(product._id, product.title)}
+                        disabled={isPending}
+                        className="btn btn-ghost btn-sm btn-circle text-error"
+                        title="Delete Product"
+                      >
+                        <FiTrash2 size={16} />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

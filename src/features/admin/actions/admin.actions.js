@@ -145,6 +145,27 @@ export const deleteProduct = async (productId) => {
   return { success: Boolean(result.deletedCount) };
 };
 
+// ── Update Product ──
+export const updateProduct = async (productId, updateData) => {
+  await requireAdmin();
+  const col = await dbConnect(collections.PRODUCTS);
+  
+  // Clean up data to ensure proper formatting
+  const sanitizedData = { ...updateData };
+  delete sanitizedData._id; // Prevent updating the immutable _id field
+  
+  if (sanitizedData.price) sanitizedData.price = Number(sanitizedData.price);
+  if (sanitizedData.discount !== undefined) sanitizedData.discount = Number(sanitizedData.discount);
+  if (sanitizedData.ratings !== undefined) sanitizedData.ratings = Number(sanitizedData.ratings);
+  sanitizedData.updatedAt = new Date().toISOString();
+
+  const result = await col.updateOne(
+    { _id: new ObjectId(productId) },
+    { $set: sanitizedData }
+  );
+  return { success: Boolean(result.modifiedCount) };
+};
+
 // ── All Users (paginated) ──
 export const getAllUsers = async (page = 1, limit = 10) => {
   await requireAdmin();

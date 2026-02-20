@@ -4,6 +4,14 @@ import React, { useState, useTransition } from "react";
 import { updateOrderStatus } from "@/features/admin/actions/admin.actions";
 import { useRouter } from "next/navigation";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import Swal from "sweetalert2";
+
+const statusColors = {
+  Confirmed: "bg-info/10 text-info border-info/20 font-semibold",
+  Processing: "bg-warning/10 text-warning border-warning/20 font-semibold",
+  Shipped: "bg-primary/10 text-primary border-primary/20 font-semibold",
+  Delivered: "bg-success/10 text-success border-success/20 font-semibold",
+};
 
 const statusOptions = ["Confirmed", "Processing", "Shipped", "Delivered"];
 
@@ -12,8 +20,25 @@ const OrdersManager = ({ data }) => {
   const [isPending, startTransition] = useTransition();
 
   const handleStatusChange = async (orderId, newStatus) => {
-    await updateOrderStatus(orderId, newStatus);
-    startTransition(() => router.refresh());
+    try {
+      await updateOrderStatus(orderId, newStatus);
+      Swal.fire({
+        icon: "success",
+        title: "Status Updated!",
+        text: `Order status has been changed to ${newStatus}.`,
+        confirmButtonColor: "#10b981", // Success green
+        timer: 2000,
+        showConfirmButton: false
+      });
+      startTransition(() => router.refresh());
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: "Could not update the order status. Please try again.",
+        confirmButtonColor: "#ef4444", // Error red
+      });
+    }
   };
 
   const goToPage = (p) => {
@@ -65,10 +90,12 @@ const OrdersManager = ({ data }) => {
                         handleStatusChange(order._id, e.target.value)
                       }
                       disabled={isPending}
-                      className="select select-sm select-bordered rounded-lg text-xs"
+                      className={`select select-sm select-bordered rounded-lg text-xs ${
+                        statusColors[order.status] || statusColors["Confirmed"]
+                      }`}
                     >
                       {statusOptions.map((s) => (
-                        <option key={s} value={s}>
+                        <option key={s} value={s} className="bg-base-100 text-base-content font-medium">
                           {s}
                         </option>
                       ))}
