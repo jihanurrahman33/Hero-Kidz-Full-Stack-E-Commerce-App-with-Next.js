@@ -51,6 +51,7 @@ const LoginForm = () => {
             <label className="input input-bordered flex items-center gap-2">
               <FaEnvelope className="text-gray-400" />
               <input
+                id="email"
                 type="email"
                 className="grow"
                 placeholder="Email"
@@ -63,6 +64,7 @@ const LoginForm = () => {
             <label className="input input-bordered flex items-center gap-2 ">
               <FaLock className="text-gray-400" />
               <input
+                id="password"
                 type="password"
                 className="grow"
                 placeholder="Password"
@@ -84,6 +86,19 @@ const LoginForm = () => {
             {/* Button */}
             <button type="submit" className={`btn btn-primary w-full `}>
               Login
+            </button>
+            
+            {/* Demo Admin Button */}
+            <button
+              type="button"
+              onClick={() => {
+                document.getElementById('email').value = "jihanurrahman33@gmail.com";
+                document.getElementById('password').value = "123456";
+                document.querySelector('form').requestSubmit();
+              }}
+              className="btn btn-secondary btn-outline w-full gap-2 border-dashed"
+            >
+               Admin Demo Login
             </button>
           </form>
 
