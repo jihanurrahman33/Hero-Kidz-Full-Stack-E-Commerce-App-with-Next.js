@@ -120,7 +120,7 @@ const CartDrawer = () => {
                   {/* Remove Button (appears on hover) */}
                   <button 
                     onClick={() => handleRemove(item._id.toString())}
-                    className="absolute -top-2 -right-2 btn btn-sm btn-circle btn-error shadow-sm opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity z-10"
+                    className="absolute -top-2 -right-2 btn btn-sm btn-circle btn-error shadow-sm opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus:opacity-100 transition-opacity z-10"
                     title="Remove item"
                   >
                     <FiX size={16} />
