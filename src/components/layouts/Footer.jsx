@@ -33,7 +33,7 @@ const Footer = () => {
         </nav>
         <nav>
           <h6 className="footer-title">Company</h6>
-          <Link href="/blog" className="link link-hover">Blog</Link>
+          <Link href="/" className="link link-hover">About Us</Link>
           <Link href="/contact" className="link link-hover">Contact</Link>
         </nav>
         <nav>

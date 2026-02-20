@@ -1,5 +1,6 @@
 import { fontBangla } from "@/app/layout";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 const Banner = () => {
@@ -18,9 +19,9 @@ const Banner = () => {
           Buy Every Toy with up to 15% discount
         </p>
 
-        <button className="btn btn-primary btn-outline">
+        <Link href="/products" className="btn btn-primary btn-outline">
           Explore Products
-        </button>
+        </Link>
       </div>
 
       {/* Image */}
