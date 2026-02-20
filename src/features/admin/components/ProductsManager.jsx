@@ -231,12 +231,24 @@ const ProductsManager = ({ data }) => {
         </div>
       )}
 
-      {/* Add Product Form */}
+      {/* Add Product Form Modal */}
       {showAdd && (
-        <form
-          onSubmit={handleAdd}
-          className="bg-base-100 rounded-[2rem] shadow-xl shadow-base-200/50 p-8 mb-8 space-y-8"
-        >
+        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-base-300/60 backdrop-blur-sm p-4 sm:p-6 overflow-hidden">
+          <div className="bg-base-100 rounded-[2rem] shadow-2xl max-w-5xl w-full relative flex flex-col max-h-[90vh]">
+            <button 
+              type="button"
+              onClick={() => setShowAdd(false)} 
+              className="btn btn-sm btn-circle absolute right-6 top-6 bg-base-200 text-gray-500 hover:bg-base-300 hover:text-gray-800 border-none z-10"
+              title="Close modal"
+            >
+              <FiX size={16} />
+            </button>
+            
+            <div className="overflow-y-auto p-6 sm:p-10 flex-1 relative">
+              <form
+                onSubmit={handleAdd}
+                className="space-y-8"
+              >
           <div className="flex items-center justify-between pb-2">
             <div>
               <h3 className="font-bold text-xl">Add New Product</h3>
@@ -367,15 +379,18 @@ const ProductsManager = ({ data }) => {
             </div>
           </div>
 
-          <div className="flex justify-end pt-6 gap-3">
-            <button type="button" onClick={() => setShowAdd(false)} className="btn btn-ghost rounded-xl px-6">
-              Cancel
-            </button>
-            <button type="submit" disabled={isPending} className="btn btn-primary rounded-xl px-8 shadow-md">
-              {isPending ? <span className="loading loading-spinner loading-sm"></span> : "Save Product"}
-            </button>
+                <div className="flex justify-end mt-8 pt-6 gap-3 sticky bottom-0 bg-base-100 -mx-6 sm:-mx-10 -mb-6 sm:-mb-10 p-6 sm:p-8 border-t border-base-200 z-10">
+                  <button type="button" onClick={() => setShowAdd(false)} className="btn btn-ghost rounded-xl px-6">
+                    Cancel
+                  </button>
+                  <button type="submit" disabled={isPending} className="btn btn-primary rounded-xl px-8 shadow-md">
+                    {isPending ? <span className="loading loading-spinner loading-sm"></span> : "Save Product"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </form>
+        </div>
       )}
 
       {/* Products Table */}

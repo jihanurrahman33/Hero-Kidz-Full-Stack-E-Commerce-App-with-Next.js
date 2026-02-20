@@ -6,6 +6,8 @@ import {
   FiShoppingBag,
   FiUsers,
   FiArrowRight,
+  FiAlertCircle,
+  FiTool,
 } from "react-icons/fi";
 
 const statCards = [
@@ -40,6 +42,54 @@ const DashboardOverview = ({ stats, recentOrders }) => {
             </div>
           );
         })}
+      </div>
+
+      {/* Actionable Insights */}
+      <h2 className="text-lg font-bold mb-4 text-gray-700">Actionable Insights</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        
+        {/* Orders Needing Attention */}
+        <div className="bg-error/10 border border-error/20 rounded-2xl p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 rounded-full bg-error/20 text-error flex items-center justify-center shrink-0">
+            <FiAlertCircle size={24} />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-error flex items-center gap-2">
+              Orders Needing Attention
+              <span className="badge badge-error badge-sm">{stats.ordersNeedingAttention || 0}</span>
+            </h3>
+            <p className="text-sm text-gray-600 mt-1">
+              Unfulfilled orders (Confirmed/Processing) older than 24 hours.
+            </p>
+            {stats.ordersNeedingAttention > 0 && (
+              <Link href="/dashboard/orders" className="text-xs font-bold text-error hover:underline mt-2 inline-block">
+                Review Orders →
+              </Link>
+            )}
+          </div>
+        </div>
+
+        {/* Incomplete Products */}
+        <div className="bg-warning/10 border border-warning/20 rounded-2xl p-5 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow">
+          <div className="w-12 h-12 rounded-full bg-warning/20 text-warning-content flex items-center justify-center shrink-0">
+            <FiTool size={24} />
+          </div>
+          <div className="flex-1">
+            <h3 className="font-bold text-warning-content flex items-center gap-2">
+              Products Missing Info
+              <span className="badge badge-warning badge-sm">{stats.incompleteProductsCount || 0}</span>
+            </h3>
+            <p className="text-sm text-gray-600 mt-1">
+              Products that are missing an image or a description.
+            </p>
+            {stats.incompleteProductsCount > 0 && (
+              <Link href="/dashboard/products" className="text-xs font-bold text-warning-content hover:underline mt-2 inline-block">
+                Update Products →
+              </Link>
+            )}
+          </div>
+        </div>
+
       </div>
 
       {/* Recent Orders */}

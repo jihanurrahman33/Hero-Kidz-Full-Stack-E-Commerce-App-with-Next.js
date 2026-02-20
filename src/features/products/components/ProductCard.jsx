@@ -14,7 +14,7 @@ const ProductCard = ({ product }) => {
     : price;
 
   return (
-    <div className="card bg-base-100 shadow-lg hover:shadow-xl transition rounded-2xl">
+    <div className="card bg-base-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-[2rem] border border-base-200/50 overflow-hidden">
       {/* Image */}
       <figure className="relative h-48">
         <Image

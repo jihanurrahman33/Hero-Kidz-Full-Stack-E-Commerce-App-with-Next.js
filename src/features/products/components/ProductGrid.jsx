@@ -3,7 +3,7 @@ import ProductCard from "./ProductCard";
 import { getFilteredProducts } from "../actions/product.actions";
 import Pagination from "@/components/ui/Pagination";
 
-const ProductGrid = async ({ filters = {} }) => {
+const ProductGrid = async ({ filters = {}, hidePagination = false }) => {
   const { products, total, page, totalPages } = await getFilteredProducts(filters);
 
   return (
@@ -15,15 +15,19 @@ const ProductGrid = async ({ filters = {} }) => {
         </div>
       ) : (
         <>
-          <p className="text-sm text-gray-500 mb-4">
-            {total} product{total !== 1 ? "s" : ""} found
-          </p>
+          {!hidePagination && (
+            <p className="text-sm text-gray-500 mb-4">
+              {total} product{total !== 1 ? "s" : ""} found
+            </p>
+          )}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
             {products.map((product) => (
               <ProductCard product={product} key={product._id?.toString()} />
             ))}
           </div>
-          <Pagination currentPage={page} totalPages={totalPages} total={total} />
+          {!hidePagination && (
+             <Pagination currentPage={page} totalPages={totalPages} total={total} />
+          )}
         </>
       )}
     </div>

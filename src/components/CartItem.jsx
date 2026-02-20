@@ -50,14 +50,14 @@ const CartItem = ({ item }) => {
   };
 
   return (
-    <div className="flex items-center gap-4 bg-white  rounded-xl p-4 shadow-sm hover:shadow-md transition">
+    <div className="flex items-center gap-4 bg-base-100 rounded-2xl p-4 shadow-sm hover:shadow-md transition border border-base-200/50">
       {/* Product Image */}
       <div className="w-20 h-20 relative">
         <Image
           src={image}
           alt={title}
           fill
-          className="object-cover rounded-lg"
+          className="object-cover rounded-xl"
         />
       </div>
 
@@ -66,37 +66,38 @@ const CartItem = ({ item }) => {
         <h3 className="font-semibold text-gray-800 line-clamp-2">{title}</h3>
 
         <p className="text-sm text-gray-500 mt-1">
-          Price: <span className="font-medium">৳{price}</span>
+          Price: <span className="font-medium text-primary">৳{price.toLocaleString()}</span>
         </p>
 
         {/* Quantity Controller */}
-        <div className="flex items-center gap-2 mt-3">
-          <button
-            onClick={onDecrease}
-            disabled={quantity <= 1 || loading}
-            className="btn btn-sm btn-outline"
-          >
-            <FaMinus />
-          </button>
+        <div className="flex items-center gap-2 mt-3 bg-base-200 w-max rounded-lg p-1">
+           <button
+             onClick={onDecrease}
+             disabled={quantity <= 1 || loading}
+             className="w-8 h-8 rounded-md flex items-center justify-center bg-base-100 shadow-sm hover:text-primary disabled:opacity-50 transition-colors"
+           >
+             <FaMinus size={12}/>
+           </button>
 
-          <span className="px-3 font-semibold">{quantity}</span>
+           <span className="w-8 text-center text-sm font-bold">{quantity}</span>
 
-          <button
-            disabled={quantity >= 10 || loading}
-            onClick={onIncrease}
-            className="btn btn-sm btn-outline"
-          >
-            <FaPlus />
-          </button>
-        </div>
+           <button
+             disabled={quantity >= 10 || loading}
+             onClick={onIncrease}
+             className="w-8 h-8 rounded-md flex items-center justify-center bg-base-100 shadow-sm hover:text-primary transition-colors"
+           >
+             <FaPlus size={12}/>
+           </button>
+         </div>
       </div>
 
       {/* Remove Button */}
       <div>
         <button
           onClick={handleDeleteCart}
-          className="btn btn-sm btn-error btn-outline"
+          className="btn btn-sm btn-circle btn-ghost text-error hover:bg-error/10 border-none"
           disabled={loading}
+          title="Remove Item"
         >
           <FaTrash />
         </button>

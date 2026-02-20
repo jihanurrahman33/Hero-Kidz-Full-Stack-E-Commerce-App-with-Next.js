@@ -8,8 +8,10 @@ import { FiShoppingCart } from "react-icons/fi";
 import { AuthButtons } from "@/features/auth";
 import { useCart } from "@/contexts/CartContext";
 
+import CartDrawer from "../cart/CartDrawer";
+
 const Navbar = () => {
-  const { cartCount } = useCart();
+  const { cartCount, toggleCart } = useCart();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -76,21 +78,20 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end space-x-4">
-          <Link href={"/cart"}>
-            <div className="indicator">
-                <button className="btn btn-primary">
-                <FiShoppingCart size={24} />
-                </button>
-                {cartCount > 0 && (
-                    <span className="badge badge-sm badge-secondary indicator-item">
-                        {cartCount}
-                    </span>
-                )}
-            </div>
-          </Link>
+          <div className="indicator">
+              <button onClick={() => toggleCart()} className="btn btn-primary" aria-label="Open Cart">
+              <FiShoppingCart size={24} />
+              </button>
+              {cartCount > 0 && (
+                  <span className="badge badge-sm badge-secondary indicator-item">
+                      {cartCount}
+                  </span>
+              )}
+          </div>
           <AuthButtons></AuthButtons>
         </div>
       </div>
+      <CartDrawer />
     </div>
   );
 };

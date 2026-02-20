@@ -22,9 +22,9 @@ export const getDashboardStats = async () => {
   const productsCol = await dbConnect(collections.PRODUCTS);
   const usersCol = await dbConnect(collections.USERS);
 
-  const [orders, productCount, userCount] = await Promise.all([
+  const [orders, products, userCount] = await Promise.all([
     ordersCol.find({}).toArray(),
-    productsCol.countDocuments(),
+    productsCol.find({}).toArray(),
     usersCol.countDocuments(),
   ]);
 
@@ -33,11 +33,28 @@ export const getDashboardStats = async () => {
     0
   );
 
+  // Calculate Actionable Insights
+  const now = new Date();
+  const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
+  const ordersNeedingAttention = orders.filter(
+    (o) => 
+      (o.status === "Confirmed" || o.status === "Processing") && 
+      new Date(o.createdAt) < twentyFourHoursAgo
+  ).length;
+
+  // Assuming stock is not fully tracked yet, we can simulate or add a placeholder for future
+  // If products have `stock` field, we'd check `p.stock < 5`. For now, it's 0 to prevent errors,
+  // or we can just count products that have no 'image' just as an 'incomplete product' metric
+  const incompleteProductsCount = products.filter(p => !p.image || !p.description).length;
+
   return {
     totalRevenue,
     orderCount: orders.length,
-    productCount,
+    productCount: products.length,
     userCount,
+    ordersNeedingAttention,
+    incompleteProductsCount,
   };
 };
 
