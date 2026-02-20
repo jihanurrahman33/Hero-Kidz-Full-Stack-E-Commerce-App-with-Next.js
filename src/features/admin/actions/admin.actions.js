@@ -39,7 +39,7 @@ export const getDashboardStats = async () => {
 
   const ordersNeedingAttention = orders.filter(
     (o) => 
-      (o.status === "Confirmed" || o.status === "Processing") && 
+      (o.status === "Confirmed" || o.status === "Processing" || !o.status) && 
       new Date(o.createdAt) < twentyFourHoursAgo
   ).length;
 
@@ -76,13 +76,24 @@ export const getRecentOrders = async (limit = 5) => {
 };
 
 // ── All Orders (paginated) ──
-export const getAllOrders = async (page = 1, limit = 10) => {
+export const getAllOrders = async (page = 1, limit = 10, status = "all") => {
   await requireAdmin();
   const col = await dbConnect(collections.ORDERS);
   const skip = (page - 1) * limit;
-  const total = await col.countDocuments();
+
+  // Build the query object
+  const query = {};
+  if (status && status !== "all") {
+    if (status === "Confirmed") {
+      query.$or = [{ status: "Confirmed" }, { status: { $exists: false } }];
+    } else {
+      query.status = status;
+    }
+  }
+
+  const total = await col.countDocuments(query);
   const orders = await col
-    .find({})
+    .find(query)
     .sort({ createdAt: -1 })
     .skip(skip)
     .limit(limit)

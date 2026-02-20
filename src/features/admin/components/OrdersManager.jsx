@@ -16,7 +16,7 @@ const statusColors = {
 
 const statusOptions = ["Confirmed", "Processing", "Shipped", "Delivered"];
 
-const OrdersManager = ({ data }) => {
+const OrdersManager = ({ data, currentStatus = "all" }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [expandedOrders, setExpandedOrders] = useState({});
@@ -51,12 +51,28 @@ const OrdersManager = ({ data }) => {
   };
 
   const goToPage = (p) => {
-    router.push(`/dashboard/orders?page=${p}`);
+    router.push(`/dashboard/orders?page=${p}&status=${currentStatus}`);
+  };
+
+  const handleFilterChange = (e) => {
+    router.push(`/dashboard/orders?page=1&status=${e.target.value}`);
   };
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-6">Manage Orders</h1>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold">Manage Orders</h1>
+        <select 
+          value={currentStatus} 
+          onChange={handleFilterChange}
+          className="select select-sm select-bordered rounded-xl max-w-xs shadow-sm bg-base-100"
+        >
+          <option value="all">All Statuses</option>
+          {statusOptions.map((s) => (
+            <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+      </div>
 
       <div className="bg-base-100 rounded-2xl shadow-sm overflow-hidden">
         <div className="overflow-x-auto">

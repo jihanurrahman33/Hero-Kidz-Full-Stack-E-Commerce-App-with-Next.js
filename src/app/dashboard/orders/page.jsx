@@ -7,9 +7,11 @@ export const metadata = { title: "Orders | Dashboard" };
 const OrdersPage = async ({ searchParams }) => {
   const params = await searchParams;
   const page = Number(params?.page) || 1;
-  const data = await getAllOrders(page);
+  const status = params?.status || "all";
+  
+  const data = await getAllOrders(page, 10, status);
 
-  return <OrdersManager data={data} />;
+  return <OrdersManager data={data} currentStatus={status} />;
 };
 
 export default OrdersPage;
