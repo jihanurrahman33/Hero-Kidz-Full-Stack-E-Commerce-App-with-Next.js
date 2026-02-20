@@ -50,56 +50,78 @@ const CartItem = ({ item }) => {
   };
 
   return (
-    <div className="flex items-center gap-4 bg-white  rounded-xl p-4 shadow-sm hover:shadow-md transition">
+    <div className="group flex flex-col sm:flex-row items-start sm:items-center gap-5 bg-base-100/80 rounded-[1.5rem] p-5 shadow-sm hover:shadow-lg hover:shadow-base-200/60 transition-all border border-transparent">
+      
       {/* Product Image */}
-      <div className="w-20 h-20 relative">
+      <div className="w-24 h-24 shrink-0 relative rounded-2xl overflow-hidden shadow-inner">
         <Image
           src={image}
           alt={title}
           fill
-          className="object-cover rounded-lg"
+          className="object-cover"
         />
       </div>
 
       {/* Product Info */}
-      <div className="flex-1">
-        <h3 className="font-semibold text-gray-800 line-clamp-2">{title}</h3>
-
-        <p className="text-sm text-gray-500 mt-1">
-          Price: <span className="font-medium">৳{price}</span>
-        </p>
-
-        {/* Quantity Controller */}
-        <div className="flex items-center gap-2 mt-3">
+      <div className="flex-1 w-full space-y-1">
+        <div className="flex justify-between items-start gap-3">
+          <h3 className="font-bold text-gray-800 line-clamp-2 text-base leading-snug">{title}</h3>
+          
+          {/* Mobile-only Trash */}
           <button
-            onClick={onDecrease}
-            disabled={quantity <= 1 || loading}
-            className="btn btn-sm btn-outline"
+            onClick={handleDeleteCart}
+            disabled={loading}
+            className="sm:hidden text-gray-400 hover:text-error hover:bg-error/10 p-2 rounded-xl transition-colors shrink-0"
+            aria-label="Remove item"
           >
-            <FaMinus />
-          </button>
-
-          <span className="px-3 font-semibold">{quantity}</span>
-
-          <button
-            disabled={quantity >= 10 || loading}
-            onClick={onIncrease}
-            className="btn btn-sm btn-outline"
-          >
-            <FaPlus />
+            <FaTrash size={14} />
           </button>
         </div>
-      </div>
 
-      {/* Remove Button */}
-      <div>
-        <button
-          onClick={handleDeleteCart}
-          className="btn btn-sm btn-error btn-outline"
-          disabled={loading}
-        >
-          <FaTrash />
-        </button>
+        <p className="text-sm text-gray-500 font-medium">
+          Price: <span className="text-primary font-bold">৳{price}</span>
+        </p>
+
+        {/* Desktop Layout Bottom Half */}
+        <div className="flex items-center justify-between pt-3">
+          
+          {/* Quantity Controller (Pill style) */}
+          <div className="inline-flex items-center gap-3 bg-base-200/50 p-1.5 rounded-full shadow-inner">
+            <button
+              onClick={onDecrease}
+              disabled={quantity <= 1 || loading}
+              className="w-7 h-7 flex items-center justify-center rounded-full bg-base-100 text-gray-600 hover:bg-primary hover:text-white disabled:opacity-50 disabled:hover:bg-base-100 disabled:hover:text-gray-600 transition-colors shadow-sm"
+              aria-label="Decrease quantity"
+            >
+              <FaMinus size={10} />
+            </button>
+
+            <span className="w-4 text-center text-sm font-bold text-gray-800">{quantity}</span>
+
+            <button
+              disabled={quantity >= 10 || loading}
+              onClick={onIncrease}
+              className="w-7 h-7 flex items-center justify-center rounded-full bg-base-100 text-gray-600 hover:bg-primary hover:text-white disabled:opacity-50 disabled:hover:bg-base-100 disabled:hover:text-gray-600 transition-colors shadow-sm"
+              aria-label="Increase quantity"
+            >
+              <FaPlus size={10} />
+            </button>
+          </div>
+
+          <div className="text-right hidden sm:flex flex-col items-end gap-1">
+             <p className="text-sm font-bold text-gray-800">Total: ৳{price * quantity}</p>
+             
+             {/* Desktop Remove Button (Soft hover) */}
+             <button
+               onClick={handleDeleteCart}
+               className="text-xs font-semibold text-error/60 hover:text-error flex items-center gap-1.5 px-2 py-1 rounded-lg hover:bg-error/10 transition-colors opacity-0 group-hover:opacity-100 focus-within:opacity-100"
+               disabled={loading}
+             >
+               <FaTrash size={12} /> Remove
+             </button>
+          </div>
+
+        </div>
       </div>
     </div>
   );
